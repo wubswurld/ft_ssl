@@ -1,19 +1,37 @@
 #include "ft_ssl.h"
 #include <stdio.h>
 
-// int     count_flags(char *str)
-// {
-//     int y = 0;
-//     if (str[0] == '-')
-//     {
-//         while (str[y + 1])
-//             y++;
-//     }
-//     return (y);
-// }
+t_shift     *check_type[2] = {start_md5, start_sha256};
 
+void    start_sha256(t_whole *sp, char *av)
+{
+    printf("SHA256\n");
+    printf("%s\n", av);
+    printf("%d\n", sp->hash);
+}
+void    start_md5(t_whole *sp, char *av)
+{
+    printf("MD5\n");
+    printf("%s\n", av);
+    printf("%d\n", sp->hash);
+}
 
-int    get_flags(char *av, t_whole *sp)
+void    get_args(t_whole *sp, char *av)
+{
+    int y;
+
+    y = 0;
+    sp->store = (char *)malloc(sizeof(char));
+    ft_strcpy(sp->store, av);
+    if (sp->fp.s)
+    {
+        sp->fp.s = 0;
+        sp->fp.s1 = 1;
+    }
+
+}
+
+void    get_flags(char *av, t_whole *sp)
 {
     int y = 0; 
     if (av[y] == '-')
@@ -21,7 +39,6 @@ int    get_flags(char *av, t_whole *sp)
         y = 1;
         while (av[y])
         {
-            // sp->flags[y] = av[y];
             (av[y] == 's') ? sp->fp.s = 1 : 0;
             (av[y] == 'p') ? sp->fp.p = 1 : 0; 
             (av[y] == 'r') ? sp->fp.r = 1 : 0; 
@@ -29,7 +46,8 @@ int    get_flags(char *av, t_whole *sp)
             y++;
         }
     }
-    return (y);
+    else
+    get_args(sp, av);
 }
 
 int     get_hash(char *str)
@@ -47,16 +65,19 @@ int     get_hash(char *str)
     return (-1);
 }
 
-// int     read_stdin()
-// {
-//     int x;
-//     char buf[1024];
-//     while (fgets(buf, 1024, stdin))
-//     {
-//        fputs(buf, stdout);
-//     }
-//     return (x);
-// }
+void     read_stdin(t_whole *sp)
+{
+    int x;
+    char  ch[1000];
+    while ((x = read(STDIN_FILENO, &ch, 1)) > 0)
+    {
+        ch[x] = '\0';
+        ft_putstr(ch);
+    }
+    ft_putchar('\n');
+    printf("%d\n", sp->hash);
+    check_type[sp->hash](sp, ch);
+}
 
 int     main(int ac, char **av)
 {
@@ -71,10 +92,11 @@ int     main(int ac, char **av)
     if (ac < 2)
        ft_putstr("usage: ft_ssl command [command opts] [command args]");
     sp->hash = get_hash(av[1]);
-    while (av[++x]) {
-        numFlags = get_flags(av[x], sp);
-    }
-    if (sp.fp.p == 1)
-        sp.ret = read_stdin();
+    while (av[++x])
+        get_flags(av[x], sp);
+    if (sp->fp.p == 1)
+        read_stdin(sp);
+    // if (ac >= 3)
+
     return (0);  
 }

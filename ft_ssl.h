@@ -9,6 +9,7 @@
 typedef struct	s_flags
 {
 	bool		s;
+	bool		s1;
 	bool		p;
 	bool		r;
 	bool		q;
@@ -17,9 +18,14 @@ typedef struct	s_flags
 typedef struct s_whole
 {
     t_flags     fp;
+	char		*store;
 	int			hash;
 	int			ret;
-	char		*flags;
 }               t_whole;
+
+void    start_md5(t_whole *sp, char *av);
+void    start_sha256(t_whole *sp, char *av);
+
+typedef void	t_shift(t_whole *sp, char *av);
 
 #endif
