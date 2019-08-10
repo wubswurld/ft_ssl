@@ -2,7 +2,7 @@ NAME = ft_ssl
 
 CFILES = main.c
 
-FLAGS = -Wall -Werror -Wextra 
+FLAGS = -Wall -Werror -Wextra
 
 LIBFT = final-libft
 
