@@ -1,6 +1,6 @@
 NAME = ft_ssl
 
-CFILES = main.c
+CFILES = main.c ft_md5.c parse.c helpers.c
 
 FLAGS = -Wall -Werror -Wextra
 
