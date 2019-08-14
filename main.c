@@ -3,10 +3,9 @@
 
 t_shift     *check_type[2] = {start_md5, start_sha256};
 
-void    start_sha256(t_whole *sp, char *av)
+void    start_sha256(char *av)
 {
     printf("%s\n", av);
-    printf("%d\n", sp->hash);
 }
 
 void     read_stdin(t_whole *sp)
@@ -18,11 +17,10 @@ void     read_stdin(t_whole *sp)
     {
         ch[x] = '\0';
         ft_strcpy(sp->value, ch);
-        // printf("arg: %s\n", ch);
     }
     if (sp->fp.p)
         ft_putstr(ch);
-    check_type[sp->hash](sp, ch);
+    check_type[sp->hash](ch);
 }
 
 int     main(int ac, char **av)
