@@ -14,20 +14,19 @@
 
 char	*ft_strcat(char *s1, char *s2)
 {
-	int x;
-	int y;
+	int	i;
+	int	j;
 
-	x = 0;
-	y = 0;
-	while (s1[y] != '\0')
+	i = 0;
+	j = 0;
+	while (s1[i])
+		i += 1;
+	while (s2[j])
 	{
-		y++;
+		s1[i + j] = s2[j];
+		j += 1;
 	}
-	while (s2[x] != '\0')
-	{
-		s1[y + x] = s2[x];
-		x++;
-	}
-	s1[x + y] = '\0';
+	s1[i + j] = '\0';
 	return (s1);
+
 }

@@ -21,12 +21,14 @@ int     get_hash(char *str)
 void    get_args(t_whole *sp, char *av)
 {
     int y;
+    int x;
 
     y = 0;
+    x = 0;
     sp->store = (char *)malloc(sizeof(char));
+    sp->fix = (char **)malloc(sizeof(char *));
     sp->arg = 1;
     ft_strcpy(sp->store, av);
-    printf("store: %s\n", sp->store);
     if (sp->fp.s)
     {
         sp->fp.s = 0;

@@ -21,3 +21,11 @@ char	*ft_uitoa_base(unsigned int val, int base)
 	}
 	return (ptr);
 }
+
+void	putError(char *str)
+{
+	ft_putstr("md5: ");
+	ft_putstr(str);
+	ft_putstr(": ");
+	ft_putstr("No such file or directory");
+}

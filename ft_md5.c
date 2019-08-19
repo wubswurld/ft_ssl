@@ -1,30 +1,86 @@
 #include "ft_ssl.h"
 #include <stdio.h>
 
-void    start_md5(char *av)
+void    print_s1(char *str)
 {
-    char *str;
-    t_hash u;
+    ft_putstr("MD5 (");
+    ft_putstr(str);
+    ft_putstr(") = ");
+}
+
+void    print_string_rev(char *str)
+{
+    ft_putstr(" \"");
+    ft_putstr(str);
+    ft_putstr("\"");
+}
+
+void    print_md5(unsigned *d,t_whole *sp)
+{
     int j;
     int k;
+    t_hash u;
  
     j = 0;
-    unsigned *d = md5(av, strlen(av));
+    if ((sp->fp.s1 || sp->arg) && sp->fp.q == 0 && sp->fp.r == 0)
+        print_s1(sp->store);
     while (j < 4)
     {
         u.hold = d[j];
         k = 0;
         while (k < 4) 
         {
-            str = ft_uitoa_base(u.b[k], 16);
-            if (ft_strlen(str) == 1)
-				ft_putchar('0');
-            ft_putstr(str);
+            sp->fin = ft_uitoa_base(u.b[k], 16);
+            if (ft_strlen(sp->fin) == 1)
+                 ft_putchar('0');
+            ft_putstr(sp->fin);
             k++;
         }
         j++;
     }
+    if ((sp->fp.s1 || sp->arg) && sp->fp.r)
+        print_string_rev(sp->store);
     ft_putchar('\n');
+}
+// void    print_smd5(unsigned *d,t_whole *sp)
+// {
+//     int j;
+//     int k;
+//     char *str;
+//     t_hash u;
+ 
+//     j = 0;
+//     sp->fin = (char *)malloc(sizeof(char));
+//     ft_putstr("MD5 (\"");
+//     ft_putstr(sp->store);
+//     ft_putstr("\") = ");
+
+//     while (j < 4)
+//     {
+//         u.hold = d[j];
+//         k = 0;
+//         while (k < 4) 
+//         {
+//             str = ft_uitoa_base(u.b[k], 16);
+//                 //  ft_putchar('0');
+//             // sp->fin = str;
+//             // ft_strcat(sp->fin, str);
+//              if (ft_strlen(str) == 1)
+//                 ft_putchar('0');
+//                 // ft_strcpy(sp->fin, 0);    
+//             ft_putstr(str);
+//             k++;
+//         }
+//         j++;
+//     }
+//     // ft_putstr(sp->fin);
+//     ft_putchar('\n');
+// }
+void    start_md5(char *av, t_whole *sp)
+{
+    unsigned *d; 
+    d = md5(av, strlen(av));
+    print_md5(d, sp);
 }
 
 int    index_grp(t_md5 *sp, int mlen, const char *msg)
@@ -67,7 +123,6 @@ void    get_hashval(t_md5 *sp)
 {
     t_munion mm;
     DigestFunc ff[] = { &f0, &f1, &f2, &f3 };
-    // sp->ff[] = { &f0, &f1, &f2, &f3 };
     short M[] = { 1, 5, 3, 7 };
     short O[] = { 0, 1, 5, 0 };
     short rot0[] = { 7,12,17,22};
