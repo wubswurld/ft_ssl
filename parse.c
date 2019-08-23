@@ -1,7 +1,7 @@
 #include "ft_ssl.h"
 #include <stdio.h>
 
-int     get_hash(char *str)
+int get_hash(char *str)
 {
     int x;
     const char *arr[2] = {"md5", "sha256"};
@@ -18,7 +18,7 @@ int     get_hash(char *str)
     return (-1);
 }
 
-void    get_args(t_whole *sp, char *av)
+char *get_args(t_whole *sp, char *av)
 {
     int y;
     int x;
@@ -34,23 +34,30 @@ void    get_args(t_whole *sp, char *av)
         sp->fp.s = 0;
         sp->fp.s1 = 1;
     }
+    return (sp->store);
 }
 
-void    get_flags(char *av, t_whole *sp)
+void get_flags(char **av, t_whole *sp)
 {
-    int y = 0; 
-    if (av[y] == '-')
+    int y = 0;
+    while (av[sp->ret])
     {
-        y = 1;
-        while (av[y])
+        if (av[sp->ret][0] == '-')
         {
-            (av[y] == 's') ? sp->fp.s = 1 : 0;
-            (av[y] == 'p') ? sp->fp.p = 1 : 0; 
-            (av[y] == 'r') ? sp->fp.r = 1 : 0; 
-            (av[y] == 'q') ? sp->fp.q = 1 : 0; 
-            y++;
+            y = 1;
+            while (av[sp->ret][y])
+            {
+                (av[sp->ret][y] == 's') ? sp->fp.s = 1 : 0;
+                (av[sp->ret][y] == 'p') ? sp->fp.p = 1 : 0;
+                (av[sp->ret][y] == 'r') ? sp->fp.r = 1 : 0;
+                (av[sp->ret][y] == 'q') ? sp->fp.q = 1 : 0;
+                y++;
+            }
         }
+        else
+        {
+            return;
+        }
+        sp->ret++;
     }
-    else
-    get_args(sp, av);
 }
