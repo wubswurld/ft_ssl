@@ -27,13 +27,16 @@ void read_stdin(t_whole *sp)
 void check_rest(t_whole *sp)
 {
     int x = 0;
+    int i = 0;
     int fd;
     char hold[10008];
     int ret = 0;
     if (sp->fp.s)
     {
-        check_type[sp->hash](sp->fix[x], sp);
+        printf("%s\n", sp->fix[1]);
+        check_type[sp->hash](sp->fix[1], sp);
         sp->fp.s = 0;
+        x++;
     }
     printf("%d\n", sp->dir_ct);
     while (x < sp->dir_ct)
@@ -51,28 +54,32 @@ void check_rest(t_whole *sp)
                 return;
             }
         }
+        else
+        {
+            return;
+        }
         x++;
     }
     // int x = 0;
-    //     int ret = 0;
-    //     int fd;
-    //     char hold[10008];
-    //     sp->argval = (char *)malloc(sizeof(char));
-    //     if (sp->fp.s1)
-    //         check_type[sp->hash](sp->store, sp);
-    //     if (sp->arg && sp->fp.s1 == 0)
+    // int ret = 0;
+    // int fd;
+    // char hold[10008];
+    // sp->argval = (char *)malloc(sizeof(char));
+    // if (sp->fp.s1)
+    //     check_type[sp->hash](sp->store, sp);
+    // if (sp->arg && sp->fp.s1 == 0)
+    // {
+    //     if ((fd = open(sp->store, O_RDONLY)))
     //     {
-    //         if ((fd = open(sp->store, O_RDONLY)))
+    //         if ((ret = read(fd, &hold, 10008)) > 0)
     //         {
-    //             if ((ret = read(fd, &hold, 10008)) > 0)
-    //             {
-    //                 hold[ret] = '\0';
-    //                 check_type[sp->hash](hold, sp);
-    //             }
-    //             else
-    //                 putError(sp->store);
+    //             hold[ret] = '\0';
+    //             check_type[sp->hash](hold, sp);
     //         }
+    //         else
+    //             putError(sp->store);
     //     }
+    // }
 }
 
 void parse_md5(char **av, t_whole *sp, int ac)
@@ -83,6 +90,7 @@ void parse_md5(char **av, t_whole *sp, int ac)
         sp->fix[x++] = ft_strdup(av[sp->ret]);
         sp->ret++;
     }
+    // sp->fix[sp->ret] = NULL;
 }
 
 void count_dir(char **av, t_whole *sp)
