@@ -27,18 +27,16 @@ void read_stdin(t_whole *sp)
 void check_rest(t_whole *sp)
 {
     int x = 0;
-    int i = 0;
+    // int i = 0;
     int fd;
     char hold[10008];
     int ret = 0;
     if (sp->fp.s)
     {
-        printf("%s\n", sp->fix[1]);
         check_type[sp->hash](sp->fix[1], sp);
         sp->fp.s = 0;
         x++;
     }
-    printf("%d\n", sp->dir_ct);
     while (x < sp->dir_ct)
     {
         if ((fd = open(sp->fix[x], O_RDONLY)))
@@ -51,12 +49,7 @@ void check_rest(t_whole *sp)
             else
             {
                 putError(sp->fix[x]);
-                return;
             }
-        }
-        else
-        {
-            return;
         }
         x++;
     }
@@ -85,11 +78,21 @@ void check_rest(t_whole *sp)
 void parse_md5(char **av, t_whole *sp, int ac)
 {
     int x = 0;
+    // printf("ac: %d\n", ac);
+    // printf("ret: %d\n", sp->ret);
     while (sp->ret < ac)
     {
+        // printf("%s\n", av[sp->ret]);
         sp->fix[x++] = ft_strdup(av[sp->ret]);
         sp->ret++;
     }
+    // sp->fix[x] = NULL;
+    // sp->fix[ac - 1] = NULL;
+    // printf("%s\n", sp->fix[3]);
+    // for (int y = 0; sp->fix[y]; y++)
+    // {
+    //     printf(":%s:\n", sp->fix[y]);
+    // }
     // sp->fix[sp->ret] = NULL;
 }
 
@@ -116,7 +119,6 @@ int main(int ac, char **av)
     t_whole *sp;
     if (!(sp = (t_whole *)malloc(sizeof(t_whole))))
         exit(1);
-    sp->fix = (char **)malloc(sizeof(char *));
     if (ac < 2)
         error_one();
     sp->hash = get_hash(av[1]);
@@ -130,6 +132,7 @@ int main(int ac, char **av)
     {
         get_flags(av, sp);
         count_dir(av, sp);
+        sp->fix = (char **)malloc(sizeof(char *) * (sp->dir_ct));
         parse_md5(av, sp, ac);
     }
     if (sp->fp.p == 1)
