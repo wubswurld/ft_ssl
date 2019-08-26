@@ -26,74 +26,48 @@ void read_stdin(t_whole *sp)
 
 void check_rest(t_whole *sp)
 {
-    int x = 0;
-    // int i = 0;
+    sp->cur_dir = 0;
     int fd;
-    char hold[10008];
+    // char hold[10008];
     int ret = 0;
-    if (sp->fp.s)
+    // if (sp->fp.s)
+    // {
+    //     check_type[sp->hash](sp->fix[1], sp);
+    //     sp->fp.s = 0;
+    //     x++;
+    // }
+    while (sp->cur_dir < sp->dir_ct)
     {
-        check_type[sp->hash](sp->fix[1], sp);
-        sp->fp.s = 0;
-        x++;
-    }
-    while (x < sp->dir_ct)
-    {
-        if ((fd = open(sp->fix[x], O_RDONLY)))
+        if (sp->fp.s)
         {
-            if ((ret = read(fd, &hold, 10008)) > 0)
+            check_type[sp->hash](sp->fix[0], sp);
+            sp->fp.s = 0;
+        }
+        else if ((fd = open(sp->fix[sp->cur_dir], O_RDONLY)))
+        {
+            if ((ret = read(fd, &sp->hold, 10008)) > 0)
             {
-                hold[ret] = '\0';
-                check_type[sp->hash](hold, sp);
+                sp->hold[ret] = '\0';
+                sp->arg = 1;
+                check_type[sp->hash](sp->hold, sp);
             }
             else
             {
-                putError(sp->fix[x]);
+                putError(sp->fix[sp->cur_dir]);
             }
         }
-        x++;
+        sp->cur_dir++;
     }
-    // int x = 0;
-    // int ret = 0;
-    // int fd;
-    // char hold[10008];
-    // sp->argval = (char *)malloc(sizeof(char));
-    // if (sp->fp.s1)
-    //     check_type[sp->hash](sp->store, sp);
-    // if (sp->arg && sp->fp.s1 == 0)
-    // {
-    //     if ((fd = open(sp->store, O_RDONLY)))
-    //     {
-    //         if ((ret = read(fd, &hold, 10008)) > 0)
-    //         {
-    //             hold[ret] = '\0';
-    //             check_type[sp->hash](hold, sp);
-    //         }
-    //         else
-    //             putError(sp->store);
-    //     }
-    // }
 }
 
 void parse_md5(char **av, t_whole *sp, int ac)
 {
     int x = 0;
-    // printf("ac: %d\n", ac);
-    // printf("ret: %d\n", sp->ret);
     while (sp->ret < ac)
     {
-        // printf("%s\n", av[sp->ret]);
         sp->fix[x++] = ft_strdup(av[sp->ret]);
         sp->ret++;
     }
-    // sp->fix[x] = NULL;
-    // sp->fix[ac - 1] = NULL;
-    // printf("%s\n", sp->fix[3]);
-    // for (int y = 0; sp->fix[y]; y++)
-    // {
-    //     printf(":%s:\n", sp->fix[y]);
-    // }
-    // sp->fix[sp->ret] = NULL;
 }
 
 void count_dir(char **av, t_whole *sp)

@@ -31,8 +31,8 @@ typedef union s_munion {
 	char b[64];
 } t_munion;
 
-typedef unsigned Digest[4];
-typedef unsigned (*DigestFunc)(unsigned a[]);
+// typedef unsigned Digest[4];
+// typedef unsigned (*DigestFunc)(unsigned a[]);
 
 typedef struct s_whole
 {
@@ -46,32 +46,38 @@ typedef struct s_whole
 	int hash;
 	int ret;
 	int dir_ct;
+	int cur_dir;
+	char hold[10008];
 } t_whole;
 
-typedef struct s_md5
-{
-	int grp;
-	int grps;
-	int os;
-	int q;
-	int p;
-	short m;
-	short o;
-	short g;
-	Digest abcd;
-	unsigned f;
-	unsigned char *msg2;
-	short *rotn;
-	unsigned kspace[64];
-	unsigned *k;
-	Digest h;
-	DigestFunc fctn;
-} t_md5;
+// typedef struct s_md5
+// {
+// 	int grp;
+// 	int grps;
+// 	int os;
+// 	int q;
+// 	int p;
+// 	short m;
+// 	short o;
+// 	short g;
+// 	Digest abcd;
+// 	unsigned f;
+// 	unsigned char *msg2;
+// 	short *rotn;
+// 	unsigned kspace[64];
+// 	unsigned *k;
+// 	Digest h;
+// 	DigestFunc fctn;
+// } t_md5;
 
+//printing
 void putError(char *str);
 void print_s1(char *str);
-void grp_hash(t_md5 *sp);
-void add_hash(t_md5 *sp);
+void print_arg(char *str);
+void print_string_rev(char *str);
+
+// void grp_hash(t_md5 *sp);
+// void add_hash(t_md5 *sp);
 void start_md5(char *av, t_whole *sp);
 void start_sha256(char *av, t_whole *sp);
 char *get_args(t_whole *sp, char *av);
@@ -79,12 +85,12 @@ int get_hash(char *str);
 void get_flags(char **av, t_whole *sp);
 unsigned *md5(const char *msg, int mlen);
 char *ft_uitoa_base(unsigned int val, int base);
-unsigned f0(unsigned abcd[]);
-unsigned f1(unsigned abcd[]);
-unsigned f2(unsigned abcd[]);
-unsigned f3(unsigned abcd[]);
-unsigned *calcKs(unsigned *k);
-unsigned rol(unsigned v, short amt);
+// unsigned f0(unsigned abcd[]);
+// unsigned f1(unsigned abcd[]);
+// unsigned f2(unsigned abcd[]);
+// unsigned f3(unsigned abcd[]);
+// unsigned *calcKs(unsigned *k);
+// unsigned rol(unsigned v, short amt);
 
 typedef void t_shift(char *av, t_whole *sp);
 
