@@ -1,6 +1,16 @@
 #include "ft_ssl.h"
 #include <stdio.h>
 
+void parse_md5(char **av, t_whole *sp, int ac)
+{
+    int x = 0;
+    while (sp->ret < ac)
+    {
+        sp->fix[x++] = ft_strdup(av[sp->ret]);
+        sp->ret++;
+    }
+}
+
 int get_hash(char *str)
 {
     int x;
@@ -18,25 +28,6 @@ int get_hash(char *str)
     return (-1);
 }
 
-char *get_args(t_whole *sp, char *av)
-{
-    int y;
-    int x;
-
-    y = 0;
-    x = 0;
-    sp->store = (char *)malloc(sizeof(char));
-    sp->fix = (char **)malloc(sizeof(char *));
-    sp->arg = 1;
-    ft_strcpy(sp->store, av);
-    if (sp->fp.s)
-    {
-        sp->fp.s = 0;
-        sp->fp.s1 = 1;
-    }
-    return (sp->store);
-}
-
 void get_flags(char **av, t_whole *sp)
 {
     int y = 0;
@@ -51,13 +42,31 @@ void get_flags(char **av, t_whole *sp)
                 (av[sp->ret][y] == 'p') ? sp->fp.p = 1 : 0;
                 (av[sp->ret][y] == 'r') ? sp->fp.r = 1 : 0;
                 (av[sp->ret][y] == 'q') ? sp->fp.q = 1 : 0;
+                if (sp->fp.p == 0 && sp->fp.s == 0 && sp->fp.r == 0 && sp->fp.q == 0)
+                    invalid_option(av, y, sp);
                 y++;
             }
         }
         else
-        {
             return;
-        }
         sp->ret++;
     }
+}
+
+void count_dir(char **av, t_whole *sp)
+{
+    sp->dir_ct = 0;
+    int q = sp->ret;
+    while (av[q])
+    {
+        if (av[q][0] != '-')
+            sp->dir_ct++;
+        q++;
+    }
+}
+
+void start_sha256(char *av, t_whole *sp)
+{
+    printf("%s\n", av);
+    printf("%d\n", sp->fp.s1);
 }

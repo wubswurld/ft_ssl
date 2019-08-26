@@ -48,6 +48,7 @@ typedef struct s_whole
 	int dir_ct;
 	int cur_dir;
 	char hold[10008];
+	bool err;
 } t_whole;
 
 // typedef struct s_md5
@@ -75,12 +76,19 @@ void putError(char *str);
 void print_s1(char *str);
 void print_arg(char *str);
 void print_string_rev(char *str);
-
+void error_one();
+void invalid_hash(char *av);
+void invalid_option(char **av, int y, t_whole *sp);
+//parsing
+void count_dir(char **av, t_whole *sp);
+void parse_md5(char **av, t_whole *sp, int ac);
 // void grp_hash(t_md5 *sp);
 // void add_hash(t_md5 *sp);
+
+//start
 void start_md5(char *av, t_whole *sp);
 void start_sha256(char *av, t_whole *sp);
-char *get_args(t_whole *sp, char *av);
+
 int get_hash(char *str);
 void get_flags(char **av, t_whole *sp);
 unsigned *md5(const char *msg, int mlen);
