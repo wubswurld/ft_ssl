@@ -12,6 +12,7 @@
 #include "final-libft/libft.h"
 
 typedef unsigned Digest[4];
+typedef unsigned (*DgstFctn)(unsigned a[]);
 
 typedef struct s_flags
 {
@@ -35,10 +36,10 @@ union s_union {
 	char b[64];
 } mm;
 
-typedef union uwb {
+typedef union s_output {
 	unsigned w;
 	unsigned char b[4];
-} WBunion;
+} t_output;
 
 typedef struct s_whole
 {
@@ -60,8 +61,19 @@ typedef struct s_whole
 
 typedef struct s_md5
 {
-	Digest h0;
+	int grps;
+	int grp;
+	int q;
+	int p;
+	int os;
+	unsigned char *msg2;
 	Digest h;
+	Digest abcd;
+	DgstFctn fctn;
+	unsigned f;
+	unsigned *k;
+	unsigned kspace[64];
+
 } t_md5;
 
 // typedef struct s_md5

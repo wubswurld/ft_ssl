@@ -16,6 +16,7 @@ void read_stdin(t_whole *sp)
     if (sp->fp.p)
         ft_putstr(ch);
     check_type[sp->hash](sp->value, sp);
+    sp->fp.p = 0;
 }
 
 void check_rest(t_whole *sp)
