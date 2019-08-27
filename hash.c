@@ -1,11 +1,11 @@
 #include "ft_ssl.h"
 
-// void    grp_hash(t_md5 *sp)
+// void grp_hash(t_md5 *sp)
 // {
-//     while (sp->q<4)
+//     while (sp->q < 4)
 //     {
-//          sp->abcd[sp->q] = sp->h[sp->q];
-//          sp->q++;
+//         sp->abcd[sp->q] = sp->h[sp->q];
+//         sp->q++;
 //     }
 // }
 

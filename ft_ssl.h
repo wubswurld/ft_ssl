@@ -11,6 +11,8 @@
 #include <sys/stat.h>
 #include "final-libft/libft.h"
 
+typedef unsigned Digest[4];
+
 typedef struct s_flags
 {
 	bool s;
@@ -26,20 +28,23 @@ typedef union s_hash {
 	unsigned char b[4];
 } t_hash;
 
-typedef union s_munion {
-	unsigned w[16];
-	char b[64];
-} t_munion;
-
 // typedef unsigned Digest[4];
 // typedef unsigned (*DigestFunc)(unsigned a[]);
+union s_union {
+	unsigned w[16];
+	char b[64];
+} mm;
+
+typedef union uwb {
+	unsigned w;
+	unsigned char b[4];
+} WBunion;
 
 typedef struct s_whole
 {
 	t_flags fp;
 	bool arg;
-	char *argval;
-	char *store;
+	bool err;
 	char **fix;
 	char *value;
 	char *fin;
@@ -47,9 +52,17 @@ typedef struct s_whole
 	int ret;
 	int dir_ct;
 	int cur_dir;
+	int fd;
+	int k;
+	int j;
 	char hold[10008];
-	bool err;
 } t_whole;
+
+typedef struct s_md5
+{
+	Digest h0;
+	Digest h;
+} t_md5;
 
 // typedef struct s_md5
 // {
@@ -79,6 +92,7 @@ void print_string_rev(char *str);
 void error_one();
 void invalid_hash(char *av);
 void invalid_option(char **av, int y, t_whole *sp);
+void print_md5(unsigned *d, t_whole *sp);
 //parsing
 void count_dir(char **av, t_whole *sp);
 void parse_md5(char **av, t_whole *sp, int ac);
@@ -93,12 +107,12 @@ int get_hash(char *str);
 void get_flags(char **av, t_whole *sp);
 unsigned *md5(const char *msg, int mlen);
 char *ft_uitoa_base(unsigned int val, int base);
-// unsigned f0(unsigned abcd[]);
-// unsigned f1(unsigned abcd[]);
-// unsigned f2(unsigned abcd[]);
-// unsigned f3(unsigned abcd[]);
-// unsigned *calcKs(unsigned *k);
-// unsigned rol(unsigned v, short amt);
+unsigned f0(unsigned abcd[]);
+unsigned f1(unsigned abcd[]);
+unsigned f2(unsigned abcd[]);
+unsigned f3(unsigned abcd[]);
+unsigned *calcKs(unsigned *k);
+unsigned rol(unsigned v, short amt);
 
 typedef void t_shift(char *av, t_whole *sp);
 

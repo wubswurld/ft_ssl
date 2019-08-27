@@ -21,7 +21,6 @@ void read_stdin(t_whole *sp)
 void check_rest(t_whole *sp)
 {
     sp->cur_dir = 0;
-    int fd;
     int ret = 0;
     while (sp->cur_dir < sp->dir_ct)
     {
@@ -30,18 +29,16 @@ void check_rest(t_whole *sp)
             check_type[sp->hash](sp->fix[0], sp);
             sp->fp.s = 0;
         }
-        else if ((fd = open(sp->fix[sp->cur_dir], O_RDONLY)))
+        else if ((sp->fd = open(sp->fix[sp->cur_dir], O_RDONLY)))
         {
-            if ((ret = read(fd, &sp->hold, 10008)) > 0)
+            if ((ret = read(sp->fd, &sp->hold, 10008)) > 0)
             {
                 sp->hold[ret] = '\0';
                 sp->arg = 1;
                 check_type[sp->hash](sp->hold, sp);
             }
             else
-            {
                 putError(sp->fix[sp->cur_dir]);
-            }
         }
         sp->cur_dir++;
     }

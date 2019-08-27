@@ -33,12 +33,3 @@ void invalid_hash(char *av)
     ft_putstr("\' is an invalid command.");
     exit(1);
 }
-
-void invalid_option(char **av, int y, t_whole *sp)
-{
-    ft_putstr("md5: illegal option -- ");
-    ft_putchar(av[sp->ret][y]);
-    ft_putchar('\n');
-    ft_putstr("usage: md5 [-pqrtx] [-s string] [files ...]\n");
-    sp->err = 1;
-}
