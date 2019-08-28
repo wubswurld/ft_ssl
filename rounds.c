@@ -36,10 +36,3 @@ unsigned *calcKs(unsigned *k)
     }
     return k;
 }
-
-// ROtate v Left by amt bits
-unsigned rol(unsigned v, short amt)
-{
-    unsigned msk1 = (1 << amt) - 1;
-    return ((v >> (32 - amt)) & msk1) | ((v << amt) & ~msk1);
-}

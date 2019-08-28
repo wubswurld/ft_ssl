@@ -1,6 +1,6 @@
 NAME = ft_ssl
 
-CFILES = main.c ft_md5.c parse.c helpers.c rounds.c hash.c printfiles.c
+CFILES = main.c ft_md5.c parse.c helpers.c rounds.c hash.c printfiles.c md5Extra.c
 
 FLAGS = -Wall -Werror -Wextra 
 # -g -fsanitize=address

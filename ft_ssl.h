@@ -73,28 +73,17 @@ typedef struct s_md5
 	unsigned f;
 	unsigned *k;
 	unsigned kspace[64];
+	short *rotn;
+	short m;
+	short o;
+	short g;
 
 } t_md5;
 
-// typedef struct s_md5
-// {
-// 	int grp;
-// 	int grps;
-// 	int os;
-// 	int q;
-// 	int p;
-// 	short m;
-// 	short o;
-// 	short g;
-// 	Digest abcd;
-// 	unsigned f;
-// 	unsigned char *msg2;
-// 	short *rotn;
-// 	unsigned kspace[64];
-// 	unsigned *k;
-// 	Digest h;
-// 	DigestFunc fctn;
-// } t_md5;
+typedef struct s_sha256
+{
+	unsigned int h[8];
+} t_sha256;
 
 //printing
 void putError(char *str);
@@ -114,6 +103,13 @@ void parse_md5(char **av, t_whole *sp, int ac);
 //start
 void start_md5(char *av, t_whole *sp);
 void start_sha256(char *av, t_whole *sp);
+
+//algorithm
+void get_h(t_md5 *sp);
+void init_msg(t_md5 *sp, const char *msg, int mlen);
+void set_grps(t_md5 *sp);
+void handle_f(t_md5 *sp);
+void handle_rest(t_md5 *sp);
 
 int get_hash(char *str);
 void get_flags(char **av, t_whole *sp);
