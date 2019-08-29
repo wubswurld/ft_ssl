@@ -11,6 +11,12 @@
 #include <sys/stat.h>
 #include "final-libft/libft.h"
 
+#define ROTR(x, n, w) (x >> n) | (x << (w - n))
+#define ROTL(x, n, w) (x << n) | (x >> (w - n))
+#define SHR(x, n) (x >> n)
+#define CH(x, y, z) (x & y) ^ ((~x) & z)
+#define MAJ(x, y, z) (x & y) ^ (x & z) ^ (y & z)
+
 typedef unsigned Digest[4];
 typedef unsigned (*DgstFctn)(unsigned a[]);
 
@@ -80,9 +86,28 @@ typedef struct s_md5
 
 } t_md5;
 
+typedef struct s_sha_init
+{
+	uint32_t a;
+	uint32_t b;
+	uint32_t c;
+	uint32_t d;
+	uint32_t e;
+	uint32_t f;
+	uint32_t g;
+	uint32_t h;
+
+} t_sha_init;
+
 typedef struct s_sha256
 {
 	unsigned int h[8];
+	uint32_t w[64];
+	uint32_t tmp[2];
+	char *hold;
+	char *tech;
+	uint64_t block;
+	t_sha_init *tp;
 } t_sha256;
 
 //printing

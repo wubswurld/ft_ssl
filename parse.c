@@ -87,18 +87,157 @@ void init_hash(t_sha256 *sp)
     sp->h[7] = 0x5be0cd19;
 }
 
-unsigned *sha256(const char *msg, int mlen)
+unsigned int LitToBigEndian(unsigned int x)
 {
-    int len;
+    return (((x >> 24) & 0x000000ff) | ((x >> 8) & 0x0000ff00) | ((x << 8) & 0x00ff0000) | ((x << 24) & 0xff000000));
+}
+
+void expand_msg(t_sha256 *sp)
+{
+    int x = 0;
+    uint32_t tmp[2];
+    while (x < 64)
+    {
+        if (x < 16)
+        {
+            ft_memcpy(&sp->w[x], sp->hold, 64);
+            sp->w[x] = LitToBigEndian(sp->w[x]);
+        }
+        else
+        {
+            tmp[0] = (ROTR(sp->w[x - 15], 7, 32)) ^ (ROTR(sp->w[x - 15], 18, 32)) ^ (SHR(sp->w[x - 15], 3));
+            tmp[1] = (ROTR(sp->w[x - 2], 17, 32)) ^ (ROTR(sp->w[x - 2], 19, 32)) ^ (SHR(sp->w[x - 2], 10));
+            sp->w[x] = sp->w[x - 16] + tmp[0] + sp->w[x - 7] + tmp[1];
+        }
+        x++;
+    }
+}
+
+void init_ath(t_sha256 *sp)
+{
+    if (!(sp->tp = (t_sha_init *)malloc(sizeof(t_sha_init))))
+        exit(1);
+    sp->tp->a = sp->h[0];
+    sp->tp->b = sp->h[1];
+    sp->tp->c = sp->h[2];
+    sp->tp->d = sp->h[3];
+    sp->tp->e = sp->h[4];
+    sp->tp->f = sp->h[5];
+    sp->tp->g = sp->h[6];
+    sp->tp->h = sp->h[7];
+}
+
+void compress_sha(t_sha256 *sp)
+{
+    int x = 0;
+    uint32_t tmp[2];
+    uint32_t hold[2];
+    uint32_t fin[2];
+    while (x < 64)
+    {
+        tmp[0] = ROTR(sp->tp->e, 6, 32) ^ ROTR(sp->tp->e, 11, 32) ^ ROTR(sp->tp->e, 25, 32);
+        hold[0] = CH(sp->tp->e, sp->tp->f, sp->tp->g);
+        fin[0] = sp->tp->h + tmp[0] + hold[0] + k[x] + sp->w[x];
+        tmp[1] = ROTR(sp->tp->a, 2, 32) ^ ROTR(sp->tp->a, 13, 32) ^ ROTR(sp->tp->a, 22, 32);
+        hold[1] = MAJ(sp->tp->a, sp->tp->b, sp->tp->c);
+        fin[1] = tmp[1] + hold[1];
+        sp->tp->h = sp->tp->g;
+        sp->tp->g = sp->tp->f;
+        sp->tp->f = sp->tp->e;
+        sp->tp->e = sp->tp->d + fin[0];
+        sp->tp->d = sp->tp->c;
+        sp->tp->c = sp->tp->b;
+        sp->tp->b = sp->tp->a;
+        sp->tp->a = fin[0] + fin[1];
+        x++;
+    }
+}
+
+void add_compress(t_sha256 *sp)
+{
+    sp->tp->a += sp->h[0];
+    sp->tp->b += sp->h[1];
+    sp->tp->c += sp->h[2];
+    sp->tp->d += sp->h[3];
+    sp->tp->e += sp->h[4];
+    sp->tp->f += sp->h[5];
+    sp->tp->g += sp->h[6];
+    sp->tp->h += sp->h[7];
+    sp->h[0] = sp->tp->a;
+    sp->h[1] = sp->tp->b;
+    sp->h[2] = sp->tp->c;
+    sp->h[3] = sp->tp->d;
+    sp->h[4] = sp->tp->e;
+    sp->h[5] = sp->tp->f;
+    sp->h[6] = sp->tp->g;
+    sp->h[7] = sp->tp->h;
+}
+
+void dgst_msg(t_sha256 *sp)
+{
+    //entire msg will fit in 0-16 of w[16]
+    uint64_t chunk = 0;
+    //if block size is 128 it will run twice in 2 blocks
+    // int tmp = sp->block / 64;
+    init_ath(sp);
+    while (chunk < sp->block / 64)
+    {
+        expand_msg(sp);
+        compress_sha(sp);
+        add_compress(sp);
+        chunk++;
+    }
+}
+
+void update_hash(t_sha256 *sp, const char *msg, int mlen)
+{
+    sp->block = mlen + 9;
+    while (sp->block % 64 > 0)
+        sp->block++;
+    sp->hold = (char *)malloc(sizeof(char) * (sp->block));
+    ft_bzero(sp->hold, sp->block);
+    ft_memcpy(sp->hold, msg, mlen);
+    //add '1' bit to end 2^7 aka 128 or last place in bit because a byte has 8 bits and thats the last place
+    sp->hold[mlen] = 0x80;
+    sp->hold[sp->block - 8] = (uint64_t)LitToBigEndian(mlen * 8);
+}
+
+void print_sha(t_sha256 *sp)
+{
+    int i;
+    // t_sha256 *np;
+    // char *tmp = NULL;
+
+    i = 0;
+    // if (!(np = (t_sha256 *)malloc(sizeof(t_sha256))))
+    //     exit(1);
+    // if (sp->fp.s && sp->fp.q == 0 && sp->fp.r == 0 && sp->fp.p == 0)
+    //     print_s1(sp->fix[0]);
+    // if (sp->arg && sp->fp.q == 0 && sp->fp.r == 0)
+    //     print_arg(sp->fix[sp->cur_dir]);
+    while (i < 8)
+    {
+        printf("%08x", (sp->h[i++]));
+    }
+    free(sp);
+}
+
+void sha256(const char *msg, int mlen)
+{
     t_sha256 *sp;
     if (!(sp = (t_sha256 *)malloc(sizeof(t_sha256))))
         exit(1);
     init_hash(sp);
+    update_hash(sp, msg, mlen);
+    dgst_msg(sp);
+    print_sha(sp);
 }
 
 void start_sha256(char *av, t_whole *sp)
 {
-    unsigned *d;
-    d = sha256(av, ft_strlen(av));
+    // unsigned *d;
+    // d = sha256(av, ft_strlen(av));
+    sha256(av, ft_strlen(av));
+    printf("%d\n", sp->ret);
     // print_sha256();
 }
