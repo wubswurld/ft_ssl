@@ -65,6 +65,7 @@ int main(int ac, char **av)
     }
     if ((sp->fp.p == 1 || sp->dir_ct == 0) && sp->err == 0)
         read_stdin(sp);
+    printf("%d\n", sp->fp.s);
     if (ac >= 3)
         check_rest(sp);
     return (0);
