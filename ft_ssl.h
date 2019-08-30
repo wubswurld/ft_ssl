@@ -11,12 +11,12 @@
 #include <sys/stat.h>
 #include "final-libft/libft.h"
 
-#define ROTR(x, n, w) (x >> n) | (x << (w - n))
-#define ROTL(x, n, w) (x << n) | (x >> (w - n))
+#define ROTR(x, n) (x >> n) | (x << (32 - n))
+#define ROTL(x, n) (x << n) | (x >> (32 - n))
 #define SHR(x, n) (x >> n)
 #define CH(x, y, z) (x & y) ^ ((~x) & z)
 #define MAJ(x, y, z) (x & y) ^ (x & z) ^ (y & z)
-
+#define TRIP_SHFT(x) (ROTR(x, 6) ^ ROTR(x, 11) ^ ROTR(x, 25))
 typedef unsigned Digest[4];
 typedef unsigned (*DgstFctn)(unsigned a[]);
 
