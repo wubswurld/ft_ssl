@@ -1,5 +1,4 @@
 #include "ft_ssl.h"
-#include <stdio.h>
 
 void parse_md5(char **av, t_whole *sp, int ac)
 {
@@ -28,17 +27,19 @@ int get_hash(char *str)
     return (-1);
 }
 
-void put_srr()
+void handle_s(char **av, t_whole *sp)
 {
-    ft_putstr("md5: option requires an argument -- s\n");
-    ft_putstr("usage: md5 [-pqrtx] [-s string] [files ...]\n");
-    exit(1);
+    sp->fp.s = 1;
+    (av[sp->ret + 1] == NULL) ? put_srr() : ({
+        ft_strcpy(sp->s_hold, av[sp->ret + 1]);
+        sp->ret += 1;
+    });
 }
 
 void get_flags(char **av, t_whole *sp)
 {
     int y = 0;
-    // sp->s_hold = (char *)malloc(sizeof(char));
+    sp->s_hold = (char *)malloc(sizeof(char));
     while (av[sp->ret])
     {
         if (av[sp->ret][0] == '-')
@@ -46,22 +47,10 @@ void get_flags(char **av, t_whole *sp)
             y = 1;
             while (av[sp->ret][y])
             {
-                (av[sp->ret][y] == 's') ? sp->fp.s = 1 : 0;
-                printf("%d\n", sp->fp.s);
-                // if (av[sp->ret][y] == 's')
-                // {
-                //     sp->fp.s = 1;
-                //     if (av[sp->ret + 1] == NULL)
-                //         put_srr();
-                //     else
-                //     {
-                //         ft_strcpy(sp->s_hold, av[sp->ret + 1]);
-                //     }
-                // }
+                (av[sp->ret][y] == 's') ? ({ handle_s(av, sp); return; }) : 0;
                 (av[sp->ret][y] == 'p') ? sp->fp.p = 1 : 0;
                 (av[sp->ret][y] == 'r') ? sp->fp.r = 1 : 0;
                 (av[sp->ret][y] == 'q') ? sp->fp.q = 1 : 0;
-                printf("%d\n", sp->fp.s);
                 if (sp->fp.p == 0 && sp->fp.s == 0 && sp->fp.r == 0 && sp->fp.q == 0)
                     invalid_option(av, y, sp);
                 y++;
@@ -70,7 +59,6 @@ void get_flags(char **av, t_whole *sp)
         else
             return;
         sp->ret++;
-        // printf("%d\n", sp->ret);
     }
 }
 
@@ -80,7 +68,6 @@ void count_dir(char **av, t_whole *sp)
     int q = sp->ret;
     while (av[q])
     {
-        // if (av[q][0] != '-')
         sp->dir_ct++;
         q++;
     }
@@ -98,53 +85,21 @@ unsigned int k[64] = {
 
 };
 
-void init_hash(t_sha256 *sp)
-{
-    sp->h[0] = 0x6a09e667;
-    sp->h[1] = 0xbb67ae85;
-    sp->h[2] = 0x3c6ef372;
-    sp->h[3] = 0xa54ff53a;
-    sp->h[4] = 0x510e527f;
-    sp->h[5] = 0x9b05688c;
-    sp->h[6] = 0x1f83d9ab;
-    sp->h[7] = 0x5be0cd19;
-}
-
-uint64_t swap_bits64(uint64_t x)
-{
-    x = ((x << 8) & 0xFF00FF00FF00FF00ULL) | ((x >> 8) & 0x00FF00FF00FF00FFULL);
-    x = ((x << 16) & 0xFFFF0000FFFF0000ULL) | ((x >> 16) & 0x0000FFFF0000FFFFULL);
-    return (x << 32) | (x >> 32);
-}
-
-unsigned int LitToBigEndian(unsigned int x)
-{
-    return (((x >> 24) & 0x000000ff) | ((x >> 8) & 0x0000ff00) | ((x << 8) & 0x00ff0000) | ((x << 24) & 0xff000000));
-}
-
-void expand_msg(t_sha256 *sp, uint32_t chunk)
-{
-    int x = 0;
-    uint32_t tmp;
-    uint32_t tmp1;
-    while (x < 64)
-    {
-        if (x < 16)
-        {
-            // printf("%d\n", chunk);
-            sp->w[x] = LitToBigEndian(*((uint64_t *)(sp->hold + chunk + (x * 4))));
-            // ft_memcpy(&sp->w[x], sp->hold, 64);
-            // sp->w[x] = LitToBigEndian(sp->w[x]);
-        }
-        else
-        {
-            tmp = (ROTR(sp->w[x - 15], 7)) ^ (ROTR(sp->w[x - 15], 18)) ^ (SHR(sp->w[x - 15], 3));
-            tmp1 = (ROTR(sp->w[x - 2], 17)) ^ (ROTR(sp->w[x - 2], 19)) ^ (SHR(sp->w[x - 2], 10));
-            sp->w[x] = sp->w[x - 16] + tmp + sp->w[x - 7] + tmp1;
-        }
-        x++;
-    }
-}
+// void expand_msg(t_sha256 *sp, uint32_t chunk)
+// {
+//     int x = 0;
+//     uint32_t tmp;
+//     uint32_t tmp1;
+//     while (x < 64)
+//     {
+//         (x < 16) ? sp->w[x] = LitToBigEndian(*((uint64_t *)(sp->hold + chunk + (x * 4)))) : ({
+//             tmp = (ROTR(sp->w[x - 15], 7)) ^ (ROTR(sp->w[x - 15], 18)) ^ (SHR(sp->w[x - 15], 3));
+//             tmp1 = (ROTR(sp->w[x - 2], 17)) ^ (ROTR(sp->w[x - 2], 19)) ^ (SHR(sp->w[x - 2], 10));
+//             sp->w[x] = sp->w[x - 16] + tmp + sp->w[x - 7] + tmp1;
+//         });
+//         x++;
+//     }
+// }
 
 void init_ath(t_sha256 *sp)
 {
@@ -179,14 +134,8 @@ void compress_sha(t_sha256 *sp)
     uint32_t fin[2];
     while (x < 64)
     {
-        // tmp = TRIP_SHFT(sp->tp->e);
-        // tmp = sha256ss1(sp->tp->e);
         tmp = (((sp->tp->e >> 6) | (sp->tp->e << (32 - 6))) ^ ((sp->tp->e >> 11) | (sp->tp->e << (32 - 11))) ^ ((sp->tp->e >> 25) | (sp->tp->e << (32 - 25))));
-        // printf("%x\n", tmp);
-        // printf("tmp: %x\n", tmp[0]);
         hold = (sp->tp->e & sp->tp->f) ^ ((~sp->tp->e) & sp->tp->g);
-        // printf("%x\n", hold);
-        // hold = CH(sp->tp->e, sp->tp->f, sp->tp->g);
         fin[0] = sp->tp->h + tmp + hold + k[x] + sp->w[x];
         // tmp1 = ROTR(sp->tp->a, 2) ^ ROTR(sp->tp->a, 13) ^ ROTR(sp->tp->a, 22);
         tmp1 = sha256ss0(sp->tp->a);
@@ -204,51 +153,29 @@ void compress_sha(t_sha256 *sp)
     }
 }
 
-void add_compress(t_sha256 *sp)
-{
-    sp->h[0] += sp->tp->a;
-    sp->h[1] += sp->tp->b;
-    sp->h[2] += sp->tp->c;
-    sp->h[3] += sp->tp->d;
-    sp->h[4] += sp->tp->e;
-    sp->h[5] += sp->tp->f;
-    sp->h[6] += sp->tp->g;
-    sp->h[7] += sp->tp->h;
-}
-
-void dgst_msg(t_sha256 *sp)
-{
-    //entire msg will fit in 0-16 of w[16]
-    uint32_t chunk = 0;
-    if (!(sp->tp = (t_sha_init *)malloc(sizeof(t_sha_init))))
-        exit(1);
-    //if block size is 128 it will run twice in 2 blocks
-    // int tmp = sp->block / 64;
-
-    while (chunk < sp->block / 64)
-    {
-        expand_msg(sp, chunk * 64);
-        init_ath(sp);
-        // printf("%x\n", sp->w[0]);
-        compress_sha(sp);
-        add_compress(sp);
-        chunk++;
-    }
-}
-
-void update_hash(t_sha256 *sp, const char *msg, int mlen)
-{
-    sp->block = mlen + 9;
-    while (sp->block % 64 > 0)
-        sp->block++;
-    sp->hold = (char *)malloc(sizeof(char) * (sp->block));
-    ft_bzero(sp->hold, sp->block);
-    ft_memcpy(sp->hold, msg, mlen);
-    //add '1' bit to end 2^7 aka 128 or last place in bit because a byte has 8 bits and thats the last place
-    sp->hold[mlen] = 0x80;
-    *(uint64_t *)(sp->hold + sp->block - 8) = (uint64_t)swap_bits64(mlen * 8);
-    // sp->hold[sp->block - 8] = (uint64_t)LitToBigEndian(mlen * 8);
-}
+// void dgst_msg(t_sha256 *sp)
+// {
+//     //entire msg will fit in 0-16 of w[16]
+//     uint32_t chunk = 0;
+//     if (!(sp->tp = (t_sha_init *)malloc(sizeof(t_sha_init))))
+//         exit(1);
+//     //if block size is 128 it will run twice in 2 blocks
+//     while (chunk < sp->block / 64)
+//     {
+//         expand_msg(sp, chunk * 64);
+//         init_ath(sp);
+//         compress_sha(sp);
+//         sp->h[0] += sp->tp->a;
+//         sp->h[1] += sp->tp->b;
+//         sp->h[2] += sp->tp->c;
+//         sp->h[3] += sp->tp->d;
+//         sp->h[4] += sp->tp->e;
+//         sp->h[5] += sp->tp->f;
+//         sp->h[6] += sp->tp->g;
+//         sp->h[7] += sp->tp->h;
+//         chunk++;
+//     }
+// }
 
 void print_sha256(char *str)
 {
@@ -267,14 +194,8 @@ void print_shaArg(char *str)
 void print_sha(t_sha256 *sp, t_whole *np)
 {
     int i;
-    // t_sha256 *np;
     char *tmp = NULL;
-    // np = NULL;
     i = 0;
-    // if (!(np = (t_sha256 *)malloc(sizeof(t_sha256))))
-    //     exit(1);
-    // printf("%d\n", np->fp.s);
-    // printf("%s\n", np->fix[0]);
     if (np->fp.s && np->fp.q == 0 && np->fp.r == 0 && np->fp.p == 0)
         print_sha256(np->fix[0]);
     if (np->arg && np->fp.q == 0 && np->fp.r == 0)
@@ -282,39 +203,11 @@ void print_sha(t_sha256 *sp, t_whole *np)
     while (i < 8)
     {
         tmp = ft_uitoa_base(sp->h[i], 16);
-        // tmp -= 1;
-        // ft_putnstr(tmp, 8);
-        // i++;
         ft_putstr(tmp);
         if (ft_strlen(tmp) == 1)
             ft_putchar('0');
-        // ft_putstr(ft_uitoa_base(sp->h[i], 16));
-        // printf("%08x", (sp->h[i]));
         i++;
     }
     ft_putchar('\n');
-    // printf("%x\n", sp->h[7]);
     free(sp);
-}
-
-void sha256(const char *msg, int mlen, t_sha256 *sp)
-{
-    // t_sha256 *sp;
-    // if (!(sp = (t_sha256 *)malloc(sizeof(t_sha256))))
-    //     exit(1);
-    init_hash(sp);
-    update_hash(sp, msg, mlen);
-    dgst_msg(sp);
-    // int x = -1;
-    // while (++x < 8)
-    // sp->h[x] = LitToBigEndian(sp->h[x]);
-}
-
-void start_sha256(char *av, t_whole *sp)
-{
-    t_sha256 *np;
-    if (!(np = (t_sha256 *)malloc(sizeof(t_sha256))))
-        exit(1);
-    sha256(av, ft_strlen(av), np);
-    print_sha(np, sp);
 }

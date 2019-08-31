@@ -60,7 +60,6 @@ int main(int ac, char **av)
         invalid_hash(av[1]);
     else
     {
-        sp->s_hold = (char *)malloc(sizeof(char));
         get_flags(av, sp);
         count_dir(av, sp);
         sp->fix = (char **)malloc(sizeof(char *) * (sp->dir_ct));

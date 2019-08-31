@@ -112,6 +112,7 @@ typedef struct s_sha256
 } t_sha256;
 
 //printing
+void put_srr();
 void putError(char *str);
 void print_s1(char *str);
 void print_arg(char *str);
@@ -125,6 +126,8 @@ void count_dir(char **av, t_whole *sp);
 void parse_md5(char **av, t_whole *sp, int ac);
 // void grp_hash(t_md5 *sp);
 // void add_hash(t_md5 *sp);
+unsigned int LitToBigEndian(unsigned int x);
+void expand_msg(t_sha256 *sp, uint32_t chunk);
 
 //start
 void start_md5(char *av, t_whole *sp);
