@@ -85,22 +85,6 @@ unsigned int k[64] = {
 
 };
 
-// void expand_msg(t_sha256 *sp, uint32_t chunk)
-// {
-//     int x = 0;
-//     uint32_t tmp;
-//     uint32_t tmp1;
-//     while (x < 64)
-//     {
-//         (x < 16) ? sp->w[x] = LitToBigEndian(*((uint64_t *)(sp->hold + chunk + (x * 4)))) : ({
-//             tmp = (ROTR(sp->w[x - 15], 7)) ^ (ROTR(sp->w[x - 15], 18)) ^ (SHR(sp->w[x - 15], 3));
-//             tmp1 = (ROTR(sp->w[x - 2], 17)) ^ (ROTR(sp->w[x - 2], 19)) ^ (SHR(sp->w[x - 2], 10));
-//             sp->w[x] = sp->w[x - 16] + tmp + sp->w[x - 7] + tmp1;
-//         });
-//         x++;
-//     }
-// }
-
 void init_ath(t_sha256 *sp)
 {
     sp->tp->a = sp->h[0];
@@ -111,17 +95,6 @@ void init_ath(t_sha256 *sp)
     sp->tp->f = sp->h[5];
     sp->tp->g = sp->h[6];
     sp->tp->h = sp->h[7];
-}
-
-uint32_t sha256ss1(uint32_t hash)
-{
-    return ((hash >> 6) | (hash << (32 - 6))) ^ ((hash >> 11) | (hash << (32 - 11))) ^ ((hash >> 25) | (hash << (32 - 25)));
-}
-
-uint32_t sha256ss0(uint32_t hash)
-{
-    // return ((ROTR(hash, 2, 32)) ^ (ROTR(hash, 13, 32)) ^ (ROTR(hash, 22, 32)));
-    return ((hash >> 2) | (hash << (32 - 2))) ^ ((hash >> 13) | (hash << (32 - 13))) ^ ((hash >> 22) | (hash << (32 - 22)));
 }
 
 void compress_sha(t_sha256 *sp)
@@ -137,9 +110,8 @@ void compress_sha(t_sha256 *sp)
         tmp = (((sp->tp->e >> 6) | (sp->tp->e << (32 - 6))) ^ ((sp->tp->e >> 11) | (sp->tp->e << (32 - 11))) ^ ((sp->tp->e >> 25) | (sp->tp->e << (32 - 25))));
         hold = (sp->tp->e & sp->tp->f) ^ ((~sp->tp->e) & sp->tp->g);
         fin[0] = sp->tp->h + tmp + hold + k[x] + sp->w[x];
-        // tmp1 = ROTR(sp->tp->a, 2) ^ ROTR(sp->tp->a, 13) ^ ROTR(sp->tp->a, 22);
-        tmp1 = sha256ss0(sp->tp->a);
-        hold1 = MAJ(sp->tp->a, sp->tp->b, sp->tp->c);
+        tmp1 = ((sp->tp->a >> 2) | (sp->tp->a << (32 - 2))) ^ ((sp->tp->a >> 13) | (sp->tp->a << (32 - 13))) ^ ((sp->tp->a >> 22) | (sp->tp->a << (32 - 22)));
+        hold1 = (sp->tp->a & sp->tp->b) ^ (sp->tp->a & sp->tp->c) ^ (sp->tp->b & sp->tp->c);
         fin[1] = tmp1 + hold1;
         sp->tp->h = sp->tp->g;
         sp->tp->g = sp->tp->f;
@@ -151,44 +123,6 @@ void compress_sha(t_sha256 *sp)
         sp->tp->a = fin[0] + fin[1];
         x++;
     }
-}
-
-// void dgst_msg(t_sha256 *sp)
-// {
-//     //entire msg will fit in 0-16 of w[16]
-//     uint32_t chunk = 0;
-//     if (!(sp->tp = (t_sha_init *)malloc(sizeof(t_sha_init))))
-//         exit(1);
-//     //if block size is 128 it will run twice in 2 blocks
-//     while (chunk < sp->block / 64)
-//     {
-//         expand_msg(sp, chunk * 64);
-//         init_ath(sp);
-//         compress_sha(sp);
-//         sp->h[0] += sp->tp->a;
-//         sp->h[1] += sp->tp->b;
-//         sp->h[2] += sp->tp->c;
-//         sp->h[3] += sp->tp->d;
-//         sp->h[4] += sp->tp->e;
-//         sp->h[5] += sp->tp->f;
-//         sp->h[6] += sp->tp->g;
-//         sp->h[7] += sp->tp->h;
-//         chunk++;
-//     }
-// }
-
-void print_sha256(char *str)
-{
-    ft_putstr("SHA256(\"");
-    ft_putstr(str);
-    ft_putstr("\") = ");
-}
-
-void print_shaArg(char *str)
-{
-    ft_putstr("SHA256(");
-    ft_putstr(str);
-    ft_putstr(") = ");
 }
 
 void print_sha(t_sha256 *sp, t_whole *np)

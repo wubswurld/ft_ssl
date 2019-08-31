@@ -121,6 +121,9 @@ void error_one();
 void invalid_hash(char *av);
 void invalid_option(char **av, int y, t_whole *sp);
 void print_md5(unsigned *d, t_whole *sp);
+void print_sha256(char *str);
+void print_shaArg(char *str);
+
 //parsing
 void count_dir(char **av, t_whole *sp);
 void parse_md5(char **av, t_whole *sp, int ac);

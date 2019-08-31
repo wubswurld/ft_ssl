@@ -19,3 +19,17 @@ void print_arg(char *str)
     ft_putstr(str);
     ft_putstr(") = ");
 }
+
+void print_sha256(char *str)
+{
+    ft_putstr("SHA256(\"");
+    ft_putstr(str);
+    ft_putstr("\") = ");
+}
+
+void print_shaArg(char *str)
+{
+    ft_putstr("SHA256(");
+    ft_putstr(str);
+    ft_putstr(") = ");
+}
