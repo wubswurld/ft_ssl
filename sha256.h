@@ -11,6 +11,6 @@ void dgst_msg(t_sha256 *sp);
 void compress_sha(t_sha256 *sp);
 uint32_t sha256ss1(uint32_t hash);
 void init_ath(t_sha256 *sp);
-uint64_t swap_bits64(uint64_t x);
+uint64_t swap_edian(uint64_t x);
 
 #endif
