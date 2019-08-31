@@ -52,6 +52,7 @@ typedef struct s_whole
 	t_flags fp;
 	bool arg;
 	bool err;
+	char *s_hold;
 	char **fix;
 	char *value;
 	char *fin;

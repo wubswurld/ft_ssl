@@ -28,9 +28,17 @@ int get_hash(char *str)
     return (-1);
 }
 
+void put_srr()
+{
+    ft_putstr("md5: option requires an argument -- s\n");
+    ft_putstr("usage: md5 [-pqrtx] [-s string] [files ...]\n");
+    exit(1);
+}
+
 void get_flags(char **av, t_whole *sp)
 {
     int y = 0;
+    // sp->s_hold = (char *)malloc(sizeof(char));
     while (av[sp->ret])
     {
         if (av[sp->ret][0] == '-')
@@ -39,9 +47,21 @@ void get_flags(char **av, t_whole *sp)
             while (av[sp->ret][y])
             {
                 (av[sp->ret][y] == 's') ? sp->fp.s = 1 : 0;
+                printf("%d\n", sp->fp.s);
+                // if (av[sp->ret][y] == 's')
+                // {
+                //     sp->fp.s = 1;
+                //     if (av[sp->ret + 1] == NULL)
+                //         put_srr();
+                //     else
+                //     {
+                //         ft_strcpy(sp->s_hold, av[sp->ret + 1]);
+                //     }
+                // }
                 (av[sp->ret][y] == 'p') ? sp->fp.p = 1 : 0;
                 (av[sp->ret][y] == 'r') ? sp->fp.r = 1 : 0;
                 (av[sp->ret][y] == 'q') ? sp->fp.q = 1 : 0;
+                printf("%d\n", sp->fp.s);
                 if (sp->fp.p == 0 && sp->fp.s == 0 && sp->fp.r == 0 && sp->fp.q == 0)
                     invalid_option(av, y, sp);
                 y++;
@@ -50,6 +70,7 @@ void get_flags(char **av, t_whole *sp)
         else
             return;
         sp->ret++;
+        // printf("%d\n", sp->ret);
     }
 }
 
@@ -59,8 +80,8 @@ void count_dir(char **av, t_whole *sp)
     int q = sp->ret;
     while (av[q])
     {
-        if (av[q][0] != '-')
-            sp->dir_ct++;
+        // if (av[q][0] != '-')
+        sp->dir_ct++;
         q++;
     }
 }
@@ -231,9 +252,16 @@ void update_hash(t_sha256 *sp, const char *msg, int mlen)
 
 void print_sha256(char *str)
 {
-    ft_putstr("SHA256 (\"");
+    ft_putstr("SHA256(\"");
     ft_putstr(str);
     ft_putstr("\") = ");
+}
+
+void print_shaArg(char *str)
+{
+    ft_putstr("SHA256(");
+    ft_putstr(str);
+    ft_putstr(") = ");
 }
 
 void print_sha(t_sha256 *sp, t_whole *np)
@@ -246,10 +274,11 @@ void print_sha(t_sha256 *sp, t_whole *np)
     // if (!(np = (t_sha256 *)malloc(sizeof(t_sha256))))
     //     exit(1);
     // printf("%d\n", np->fp.s);
+    // printf("%s\n", np->fix[0]);
     if (np->fp.s && np->fp.q == 0 && np->fp.r == 0 && np->fp.p == 0)
         print_sha256(np->fix[0]);
-    // if (np->arg && np->fp.q == 0 && np->fp.r == 0)
-    // print_arg(np->fix[np->cur_dir]);
+    if (np->arg && np->fp.q == 0 && np->fp.r == 0)
+        print_shaArg(np->fix[np->cur_dir]);
     while (i < 8)
     {
         tmp = ft_uitoa_base(sp->h[i], 16);

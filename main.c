@@ -13,6 +13,8 @@ void read_stdin(t_whole *sp)
         ch[x] = '\0';
         ft_strcpy(sp->value, ch);
     }
+    if (x == 0)
+        sp->fp.r = 0;
     if (sp->fp.p)
         ft_putstr(ch);
     check_type[sp->hash](sp->value, sp);
@@ -27,7 +29,7 @@ void check_rest(t_whole *sp)
     {
         if (sp->fp.s)
         {
-            check_type[sp->hash](sp->fix[0], sp);
+            check_type[sp->hash](sp->s_hold, sp);
             sp->fp.s = 0;
         }
         else if ((sp->fd = open(sp->fix[sp->cur_dir], O_RDONLY)))
@@ -58,6 +60,7 @@ int main(int ac, char **av)
         invalid_hash(av[1]);
     else
     {
+        sp->s_hold = (char *)malloc(sizeof(char));
         get_flags(av, sp);
         count_dir(av, sp);
         sp->fix = (char **)malloc(sizeof(char *) * (sp->dir_ct));
@@ -65,7 +68,6 @@ int main(int ac, char **av)
     }
     if ((sp->fp.p == 1 || sp->dir_ct == 0) && sp->err == 0)
         read_stdin(sp);
-    printf("%d\n", sp->fp.s);
     if (ac >= 3)
         check_rest(sp);
     return (0);
