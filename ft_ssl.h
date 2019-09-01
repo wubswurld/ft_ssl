@@ -33,8 +33,6 @@ typedef union s_hash {
 	unsigned char b[4];
 } t_hash;
 
-// typedef unsigned Digest[4];
-// typedef unsigned (*DigestFunc)(unsigned a[]);
 union s_union {
 	unsigned w[16];
 	char b[64];

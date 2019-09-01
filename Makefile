@@ -2,8 +2,7 @@ NAME = ft_ssl
 
 CFILES = main.c ft_md5.c parse.c helpers.c rounds.c printfiles.c md5Extra.c error.c sha256.c sha256helpers.c
 
-FLAGS = -Wall -Werror -Wextra 
-# -g -fsanitize=address
+FLAGS = -Wall -Werror -Wextra -g -fsanitize=address
 
 LIBFT = final-libft
 
